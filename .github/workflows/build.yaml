@@ -1,0 +1,47 @@
+name: Build & Push Docker Image
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]   # replace with your CI workflow name
+    types: [completed]
+
+  workflow_dispatch:             # manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # ✅ Only run if CI passed or manually triggered
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+
+    env:
+      IMAGE_NAME: my-node-app
+
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Set Docker image tags
+      - name: Set Docker Image Tags
+        run: |
+          TAG=${GITHUB_RUN_NUMBER}-${GITHUB_SHA::7}
+          echo "TAG=$TAG" >> $GITHUB_ENV
+        
+
+      # 3️⃣ DockerHub Login
+      - name: DockerHub Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 4️⃣ Build & Push Docker image
+      - name: Build and Push Docker Image
+        run: |
+          # Build with both tags
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:${{ env.TAG }} . 
+          
+          # Push both tags
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:${{ env.TAG }}
+          
