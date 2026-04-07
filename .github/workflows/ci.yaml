@@ -8,14 +8,12 @@ on:
       - "user-api/**"
       - "admin-ui/**"
       - ".github/workflows/**"
-
   pull_request:
     branches: ["main"]
     paths:
       - "user-ui/**"
       - "user-api/**"
       - "admin-ui/**"
-
 jobs:
   ci:
     runs-on: ubuntu-latest
