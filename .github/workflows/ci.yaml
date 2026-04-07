@@ -20,37 +20,35 @@ jobs:
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      apps: ${{ steps.set.outputs.apps }}
+      apps: ${{ steps.filter.outputs.changes }}
+
     steps:
       - uses: actions/checkout@v4
 
+      # ✅ Use a stable, production-grade action instead of custom bash
       - name: Detect changed apps
-        id: set
-        run: |
-          APPS=()
-
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | while read file; do
-            if [[ $file == user-ui/* ]]; then
-              APPS+=("user-ui")
-            elif [[ $file == user-api/* ]]; then
-              APPS+=("user-api")
-            elif [[ $file == admin-ui/* ]]; then
-              APPS+=("admin-ui")
-            fi
-          done
-
-          # Remove duplicates
-          UNIQUE=$(printf "%s\n" "${APPS[@]}" | sort -u | jq -R . | jq -s .)
-
-          echo "apps=$UNIQUE" >> $GITHUB_OUTPUT
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            user-ui:
+              - 'user-ui/**'
+            user-api:
+              - 'user-api/**'
+            admin-ui:
+              - 'admin-ui/**'
 
   ci:
     needs: detect-changes
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         app: ${{ fromJson(needs.detect-changes.outputs.apps) }}
+
+    # ✅ Skip job completely if nothing changed
+    if: needs.detect-changes.outputs.apps != '[]'
 
     name: CI – ${{ matrix.app }}
 
@@ -60,12 +58,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
+          cache: 'npm'
+        
       - name: Install dependencies
         working-directory: ${{ matrix.app }}
         run: npm ci
 
-      - name: Run tests
+      - name: Run tests with coverage
         working-directory: ${{ matrix.app }}
         run: npm test -- --coverage
 
@@ -77,14 +76,16 @@ jobs:
         working-directory: ${{ matrix.app }}
         run: npm run format:check
 
+      # ✅ Correct SonarQube usage (no working-directory with uses)
       - name: SonarQube Scan
-        working-directory: ${{ matrix.app }}
         uses: SonarSource/sonarcloud-github-action@v2
         with:
+          projectBaseDir: ${{ matrix.app }}
           args: >
             -Dsonar.projectKey=${{ matrix.app }}
             -Dsonar.organization=my-org
             -Dsonar.sources=.
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
