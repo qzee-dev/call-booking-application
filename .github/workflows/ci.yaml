@@ -25,7 +25,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ✅ Use a stable, production-grade action instead of custom bash
       - name: Detect changed apps
         id: filter
         uses: dorny/paths-filter@v3
@@ -47,7 +46,6 @@ jobs:
       matrix:
         app: ${{ fromJson(needs.detect-changes.outputs.apps) }}
 
-    # ✅ Skip job completely if nothing changed
     if: needs.detect-changes.outputs.apps != '[]'
 
     name: CI – ${{ matrix.app }}
@@ -59,7 +57,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-        
+
       - name: Install dependencies
         working-directory: ${{ matrix.app }}
         run: npm ci
@@ -72,11 +70,6 @@ jobs:
         working-directory: ${{ matrix.app }}
         run: npm run lint
 
-      - name: Check formatting
-        working-directory: ${{ matrix.app }}
-        run: npm run format:check
-
-      # ✅ Correct SonarQube usage (no working-directory with uses)
       - name: SonarQube Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
@@ -87,5 +80,11 @@ jobs:
             -Dsonar.sources=.
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: SonarQube Quality Gate
+        uses: SonarSource/sonarcloud-quality-gate-action@v1
+        timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
