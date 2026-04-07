@@ -1,4 +1,4 @@
-name: CI Pipeline (Monorepo)
+name: CI Pipeline 
 
 on:
   push:
