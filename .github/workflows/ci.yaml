@@ -17,25 +17,47 @@ on:
       - "admin-ui/**"
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      apps: ${{ steps.set.outputs.apps }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect changed apps
+        id: set
+        run: |
+          APPS=()
+
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | while read file; do
+            if [[ $file == user-ui/* ]]; then
+              APPS+=("user-ui")
+            elif [[ $file == user-api/* ]]; then
+              APPS+=("user-api")
+            elif [[ $file == admin-ui/* ]]; then
+              APPS+=("admin-ui")
+            fi
+          done
+
+          # Remove duplicates
+          UNIQUE=$(printf "%s\n" "${APPS[@]}" | sort -u | jq -R . | jq -s .)
+
+          echo "apps=$UNIQUE" >> $GITHUB_OUTPUT
+
   ci:
+    needs: detect-changes
     runs-on: ubuntu-latest
 
     strategy:
-      fail-fast: false
       matrix:
-        app:
-          - user-ui
-          - user-api
-          - admin-ui
+        app: ${{ fromJson(needs.detect-changes.outputs.apps) }}
 
     name: CI – ${{ matrix.app }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
@@ -66,4 +88,3 @@ jobs:
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-``
