@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI Pipeline (Monorepo)
 
 on:
   push:
@@ -6,46 +6,63 @@ on:
     paths:
       - "user-ui/**"
       - "user-api/**"
-      - "package.json"
-      - "package-lock.json"
+      - "admin-ui/**"
       - ".github/workflows/**"
 
   pull_request:
     branches: ["main"]
     paths:
-      - "user-api/**"
       - "user-ui/**"
+      - "user-api/**"
+      - "admin-ui/**"
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - user-ui
+          - user-api
+          - admin-ui
+
+    name: CI – ${{ matrix.app }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Clean install dependencies
+      - name: Install dependencies
+        working-directory: ${{ matrix.app }}
         run: npm ci
 
       - name: Run tests
+        working-directory: ${{ matrix.app }}
         run: npm test -- --coverage
 
       - name: Run ESLint
+        working-directory: ${{ matrix.app }}
         run: npm run lint
 
       - name: Check formatting
+        working-directory: ${{ matrix.app }}
         run: npm run format:check
 
       - name: SonarQube Scan
+        working-directory: ${{ matrix.app }}
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           args: >
-            -Dsonar.projectKey=my-nodejs-app
+            -Dsonar.projectKey=${{ matrix.app }}
             -Dsonar.organization=my-org
             -Dsonar.sources=.
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
