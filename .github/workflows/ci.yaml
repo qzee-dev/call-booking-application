@@ -71,7 +71,7 @@ jobs:
         run: npm run lint
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarcloud-quality-gate-action@master
+        uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: ${{ matrix.app }}
           args: >
