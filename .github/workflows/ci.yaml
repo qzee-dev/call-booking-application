@@ -1,4 +1,4 @@
-name: CI Pipeline 
+name: CI Pipeline
 
 on:
   push:
@@ -8,14 +8,14 @@ on:
       - "user-api/**"
       - "admin-ui/**"
       - ".github/workflows/**"
-      
+
   pull_request:
     branches: ["main"]
     paths:
       - "user-ui/**"
       - "user-api/**"
       - "admin-ui/**"
-      
+
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -66,3 +66,4 @@ jobs:
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+``
