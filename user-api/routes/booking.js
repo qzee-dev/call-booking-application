@@ -5,4 +5,4 @@ const router = express.Router();
 
 router.post('/', upload.single('image'), createBooking);
 
-module.exports = router;
+module.exports = 
