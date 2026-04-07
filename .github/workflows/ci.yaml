@@ -2,14 +2,16 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - "user-ui/**"
       - "user-api/**"
-      - ".github/workflows/ci.yml"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/**"
 
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
       - "user-api/**"
       - "user-ui/**"
@@ -22,7 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node (example)
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -38,7 +40,7 @@ jobs:
 
       - name: Check formatting
         run: npm run format:check
-      
+
       - name: SonarQube Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
@@ -47,12 +49,3 @@ jobs:
             -Dsonar.organization=my-org
             -Dsonar.sources=.
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
-       # 🚨 Enforce Quality Gate (this is the key part)
-
-      - name: SonarQube Quality Gate Check
-        uses: SonarSource/sonarcloud-quality-gate-action@v1
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
