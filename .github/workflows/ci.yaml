@@ -11,8 +11,8 @@ on:
   pull_request:
     branches: [ "main" ]
     paths:
-      - "user-ui/**"
       - "user-api/**"
+      - "user-ui/**"
 
 jobs:
   build:
