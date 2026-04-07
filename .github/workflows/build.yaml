@@ -1,47 +1,62 @@
-name: Build & Push Docker Image
+name: Docker Build Pipeline
 
 on:
   workflow_run:
-    workflows: ["CI Pipeline"]   # replace with your CI workflow name
-    types: [completed]
+    workflows: ["CI Pipeline"]   # triggered after CI
+    types:
+      - completed
 
   workflow_dispatch:             # manual trigger
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        default: "dev"
 
 jobs:
-  deploy:
+  build:
+    # ✅ Only run if CI passed
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
-    # ✅ Only run if CI passed or manually triggered
-    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJson(github.event.workflow_run.outputs.apps) }}
+
+    name: Docker Build – ${{ matrix.app }}
 
     env:
-      IMAGE_NAME: my-node-app
+      # 🔹 Variables for clarity
+      APP_NAME: my-nodejs-app
+      APP_FOLDER: ${{ matrix.app }}
+      ENVIRONMENT: ${{ github.event.inputs.environment }}
+      TAG: ${{ github.run_number }}-${{ github.sha :: 7 }}
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}-${{ matrix.app }}
 
     steps:
       # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Set Docker image tags
-      - name: Set Docker Image Tags
-        run: |
-          TAG=${GITHUB_RUN_NUMBER}-${GITHUB_SHA::7}
-          echo "TAG=$TAG" >> $GITHUB_ENV
-        
-
-      # 3️⃣ DockerHub Login
+      # 2️⃣ DockerHub login
       - name: DockerHub Login
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 4️⃣ Build & Push Docker image
-      - name: Build and Push Docker Image
+      # 3️⃣ Build Docker image
+      - name: Build Docker image
         run: |
-          # Build with both tags
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:${{ env.TAG }} . 
-          
-          # Push both tags
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-node-app:${{ env.TAG }}
-          
+          docker build \
+            -t ${{ env.IMAGE_NAME }}:${{ env.TAG }} \
+            --label "app=${{ env.APP_NAME }}" \
+            --label "service=${{ matrix.app }}" \
+            --label "env=${{ env.ENVIRONMENT }}" \
+            ./${{ env.APP_FOLDER }}
+
+      # 4️⃣ Push image to DockerHub
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.IMAGE_NAME }}:${{ env.TAG }}
