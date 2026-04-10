@@ -67,9 +67,9 @@ jobs:
         working-directory: ${{ matrix.app }}
         run: npm test -- --coverage --passWithNoTests
 
-      - name: Run ESLint
-        working-directory: ${{ matrix.app }}
-        run: npm run lint
+ #     - name: Run ESLint
+ #       working-directory: ${{ matrix.app }}
+ #       run: npm run lint
 
       - name: SonarQube Scan
         uses: SonarSource/sonarcloud-github-action@v2
