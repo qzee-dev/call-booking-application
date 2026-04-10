@@ -31,34 +31,37 @@ jobs:
         with:
           filters: |
             user-ui:
-              - 'user-ui/**'
+              - "user-ui/**"
             user-api:
-              - 'user-api/**'
+              - "user-api/**"
             admin-ui:
-              - 'admin-ui/**'
+              - "admin-ui/**"
 
   ci:
     needs: detect-changes
     runs-on: ubuntu-latest
+
+    if: needs.detect-changes.outputs.apps != '[]'
 
     strategy:
       fail-fast: false
       matrix:
         app: ${{ fromJson(needs.detect-changes.outputs.apps) }}
 
-    if: needs.detect-changes.outputs.apps != '[]'
-
     name: CI – ${{ matrix.app }}
 
     steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: npm
+          cache-dependency-path: ${{ matrix.app }}/package-lock.json
 
       - name: Install dependencies
         working-directory: ${{ matrix.app }}
-        run: npm install
+        run: npm ci
 
       - name: Run tests with coverage
         working-directory: ${{ matrix.app }}
@@ -81,5 +84,3 @@ jobs:
             -Dsonar.qualitygate.wait=true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      
