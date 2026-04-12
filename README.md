@@ -8,5 +8,4 @@
 
 # Ci/Cd pipeline workflow 
 
-2026-04-12 15-37-58" src="https://github.com/user-attachments/assets/25da913e-bef0-491b-9e46-680ecc7aff2e" />
 
