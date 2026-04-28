@@ -1,24 +1,8 @@
 {
   "name": "user-api",
   "projectType": "application",
-  "root": "apps/user-api",
   "sourceRoot": "apps/user-api/src",
   "targets": {
-    "build": {
-      "executor": "nx:run-commands",
-      "outputs": ["{projectRoot}/dist"],
-      "options": {
-        "command": "npm run build",
-        "cwd": "apps/user-api"
-      }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npm test",
-        "cwd": "apps/user-api"
-      }
-    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
@@ -26,26 +10,41 @@
         "cwd": "apps/user-api"
       }
     },
-    "sonar": {
+
+    "test": {
       "executor": "nx:run-commands",
+      "outputs": ["coverage/apps/user-api"],
       "options": {
-        "command": "sonar-scanner",
+        "command": "npm test -- --coverage",
         "cwd": "apps/user-api"
       }
     },
-    "docker": {
+
+    "build": {
       "executor": "nx:run-commands",
+      "outputs": ["dist/apps/user-api"],
       "options": {
-        "command": "docker build -t ${DOCKERHUB_USERNAME}/user-api:${TAG} .",
+        "command": "npm run build",
         "cwd": "apps/user-api"
       }
     },
-    "docker:push": {
+
+    "docker-build": {
       "executor": "nx:run-commands",
+      "dependsOn": ["build"],
       "options": {
-        "command": "docker push ${DOCKERHUB_USERNAME}/user-api:${TAG}",
+        "command": "docker build -t alqoseemi/user-api:${TAG:-latest} -f Dockerfile .",
         "cwd": "apps/user-api"
+      }
+    },
+
+    "docker-push": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["docker-build"],
+      "options": {
+        "command": "docker push alqoseemi/user-api:${TAG:-latest}"
       }
     }
-  }
+  },
+  "tags": []
 }

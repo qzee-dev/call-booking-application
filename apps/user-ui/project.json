@@ -1,31 +1,8 @@
 {
   "name": "user-ui",
   "projectType": "application",
-  "root": "apps/user-ui",
   "sourceRoot": "apps/user-ui/src",
   "targets": {
-    "serve": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npm start",
-        "cwd": "apps/user-ui"
-      }
-    },
-    "build": {
-      "executor": "nx:run-commands",
-      "outputs": ["{projectRoot}/build"],
-      "options": {
-        "command": "npm run build",
-        "cwd": "apps/user-ui"
-      }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npm test -- --watch=false",
-        "cwd": "apps/user-ui"
-      }
-    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
@@ -33,26 +10,41 @@
         "cwd": "apps/user-ui"
       }
     },
-    "sonar": {
+
+    "test": {
       "executor": "nx:run-commands",
+      "outputs": ["coverage/apps/user-ui"],
       "options": {
-        "command": "sonar-scanner",
+        "command": "npm test -- --coverage",
         "cwd": "apps/user-ui"
       }
     },
-    "docker": {
+
+    "build": {
       "executor": "nx:run-commands",
+      "outputs": ["dist/apps/user-ui"],
       "options": {
-        "command": "docker build -t ${DOCKERHUB_USERNAME}/user-ui:${TAG} .",
+        "command": "npm run build",
         "cwd": "apps/user-ui"
       }
     },
-    "docker:push": {
+
+    "docker-build": {
       "executor": "nx:run-commands",
+      "dependsOn": ["build"],
       "options": {
-        "command": "docker push ${DOCKERHUB_USERNAME}/user-ui:${TAG}",
+        "command": "docker build -t alqoseemi/user-ui:${TAG:-latest} -f Dockerfile .",
         "cwd": "apps/user-ui"
+      }
+    },
+
+    "docker-push": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["docker-build"],
+      "options": {
+        "command": "docker push alqoseemi/user-ui:${TAG:-latest}"
       }
     }
-  }
+  },
+  "tags": []
 }

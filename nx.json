@@ -14,14 +14,10 @@
   ],
 
   "targetDefaults": {
-    "build": {
-      "cache": true
-    },
-    "test": {
-      "cache": true
-    },
-    "lint": {
-      "cache": true
-    }
+    "lint": { "cache": true },
+    "test": { "cache": true },
+    "build": { "cache": true },
+    "docker-build": { "cache": false },
+    "docker-push": { "cache": false }
   }
 }

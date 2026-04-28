@@ -1,13 +1,23 @@
-FROM node:17.9.0-slim
-LABEL maintainer="DeekshithSN"
-RUN useradd userapi
+FROM node:20-alpine AS build
 WORKDIR /app
-RUN chown userapi /app /home
+LABEL maintainer="Qzee-dev"
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm install --legacy-peer-deps
+
+COPY . .
+RUN npm run build
+
+# ---- Production stage ----
+FROM node:20-alpine AS production
+WORKDIR /app
+
+# Copy only runtime files
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package.json ./
+COPY --from=build /app/node_modules ./node_modules
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
 
 EXPOSE 1004
-USER userapi
-ENV MONGO_URL=""
-ENV ADMIN_EMAIL=""
-CMD ["node", "server.js"]
+CMD ["node", "dist/server.js"]

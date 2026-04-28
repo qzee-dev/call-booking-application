@@ -1,24 +1,8 @@
 {
   "name": "admin-api",
   "projectType": "application",
-  "root": "apps/admin-api",
   "sourceRoot": "apps/admin-api/src",
   "targets": {
-    "build": {
-      "executor": "nx:run-commands",
-      "outputs": ["{projectRoot}/dist"],
-      "options": {
-        "command": "npm run build",
-        "cwd": "apps/admin-api"
-      }
-    },
-    "test": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "npm test",
-        "cwd": "apps/admin-api"
-      }
-    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
@@ -26,19 +10,41 @@
         "cwd": "apps/admin-api"
       }
     },
-    "docker": {
+
+    "test": {
       "executor": "nx:run-commands",
+      "outputs": ["coverage/apps/admin-api"],
       "options": {
-        "command": "docker build -t myorg/admin-api:${TAG} .",
+        "command": "npm test -- --coverage",
         "cwd": "apps/admin-api"
       }
     },
-    "docker:push": {
+
+    "build": {
       "executor": "nx:run-commands",
+      "outputs": ["dist/apps/admin-api"],
       "options": {
-        "command": "docker push myorg/admin-api:${TAG}",
+        "command": "npm run build",
         "cwd": "apps/admin-api"
       }
+    },
+
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "docker build -t alqoseemi/admin-api:${TAG:-latest} -f Dockerfile .",
+        "cwd": "apps/admin-api"
+      }
+    },
+
+    "docker-push": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["docker-build"],
+      "options": {
+        "command": "docker push alqoseemi/admin-api:${TAG:-latest}"
+      }
     }
-  }
+  },
+  "tags": []
 }
