@@ -29,7 +29,10 @@
       ],
       "options": {
         "command": "npm run build",
-        "cwd": "apps/admin-ui"
+        "cwd": "apps/admin-ui",
+        "env": {
+          "CI": "false"
+        }
       }
     },
     "docker-build": {
