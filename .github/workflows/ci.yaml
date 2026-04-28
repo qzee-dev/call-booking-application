@@ -17,25 +17,24 @@ jobs:
         with:
           fetch-depth: 0 # REQUIRED for nx affected
 
-      # ✅ 1. Install pnpm FIRST
+      # ✅ Install pnpm first
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 9
           run_install: false
 
-      # ✅ 2. Setup Node.js + pnpm cache
+      # ✅ Setup Node + pnpm cache
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
-      # ✅ 3. Install dependencies
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # ✅ 4. Set Nx base/head correctly
+      # ✅ Nx base/head
       - name: Set Nx base and head
         run: |
           echo "BASE=origin/main" >> $GITHUB_ENV
@@ -49,19 +48,12 @@ jobs:
 
       - name: Build affected
         run: pnpm nx affected --target=build --base=$BASE --head=$HEAD
-``
 
-     # - name: Sonar Scan
-      #  uses: SonarSource/sonarcloud-github-action@v2
-     #   with:
-      #    args: >
-      #      -Dsonar.projectKey=monorepo-app
-        #    -Dsonar.organization=my-org
-         #   -Dsonar.sources=.
-        #    -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-        #    -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      # ------------------------------------
+      # SonarCloud (disabled)
+      # ------------------------------------
 
-   #   - name: Sonar Quality Gate
-    #    uses: SonarSource/sonarcloud-quality-gate-action@v1
-    #    env:
-    #      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # - name: Sonar Scan
+      #   uses: SonarSource/sonarcloud-github-action@v2
+      #   with:
+      #     args: >
