@@ -3,6 +3,13 @@
   "version": "1.0.0",
   "description": "![ma](https://user-images.githubusercontent.com/29688323/179655923-e5d9ed72-176e-4956-897c-c1bb434d5c63.jpg)",
   "main": "index.js",
+  "type": "commonjs",
+  "license": "ISC",
+  "author": "",
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,14 +17,11 @@
     "type": "git",
     "url": "git+https://github.com/qzee-dev/call-booking-application.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/qzee-dev/call-booking-application/issues"
   },
   "homepage": "https://github.com/qzee-dev/call-booking-application#readme",
+  "keywords": [],
   "devDependencies": {
     "@nx/js": "^22.6.5",
     "@nx/node": "^22.6.5",

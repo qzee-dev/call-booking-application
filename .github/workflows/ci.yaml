@@ -24,7 +24,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run:  pnpm install --frozen-lockfile
 
       # ✅ Correct base/head for Nx
       - name: Set Nx base and head
