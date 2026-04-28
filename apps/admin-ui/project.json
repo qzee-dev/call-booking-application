@@ -1,0 +1,58 @@
+{
+  "name": "admin-ui",
+  "projectType": "application",
+  "root": "apps/admin-ui",
+  "sourceRoot": "apps/admin-ui/src",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm start",
+        "cwd": "apps/admin-ui"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/build"],
+      "options": {
+        "command": "npm run build",
+        "cwd": "apps/admin-ui"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm test -- --watch=false",
+        "cwd": "apps/admin-ui"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run lint",
+        "cwd": "apps/admin-ui"
+      }
+    },
+    "sonar": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sonar-scanner",
+        "cwd": "apps/admin-ui"
+      }
+    },
+    "docker": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t ${DOCKERHUB_USERNAME}/admin-ui:${TAG} .",
+        "cwd": "apps/admin-ui"
+      }
+    },
+    "docker:push": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker push ${DOCKERHUB_USERNAME}/admin-ui:${TAG}",
+        "cwd": "apps/admin-ui"
+      }
+    }
+  }
+}

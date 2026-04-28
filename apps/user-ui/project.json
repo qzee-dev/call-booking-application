@@ -1,0 +1,58 @@
+{
+  "name": "user-ui",
+  "projectType": "application",
+  "root": "apps/user-ui",
+  "sourceRoot": "apps/user-ui/src",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm start",
+        "cwd": "apps/user-ui"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/build"],
+      "options": {
+        "command": "npm run build",
+        "cwd": "apps/user-ui"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm test -- --watch=false",
+        "cwd": "apps/user-ui"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run lint",
+        "cwd": "apps/user-ui"
+      }
+    },
+    "sonar": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sonar-scanner",
+        "cwd": "apps/user-ui"
+      }
+    },
+    "docker": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -t ${DOCKERHUB_USERNAME}/user-ui:${TAG} .",
+        "cwd": "apps/user-ui"
+      }
+    },
+    "docker:push": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker push ${DOCKERHUB_USERNAME}/user-ui:${TAG}",
+        "cwd": "apps/user-ui"
+      }
+    }
+  }
+}
