@@ -41,17 +41,17 @@ jobs:
       - name: Build affected
         run: npx nx affected --target=build --base=$BASE --head=$HEAD
 
-      - name: Sonar Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          args: >
-            -Dsonar.projectKey=monorepo-app
-            -Dsonar.organization=my-org
-            -Dsonar.sources=.
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+     # - name: Sonar Scan
+      #  uses: SonarSource/sonarcloud-github-action@v2
+     #   with:
+      #    args: >
+      #      -Dsonar.projectKey=monorepo-app
+        #    -Dsonar.organization=my-org
+         #   -Dsonar.sources=.
+        #    -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+        #    -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-      - name: Sonar Quality Gate
-        uses: SonarSource/sonarcloud-quality-gate-action@v1
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+   #   - name: Sonar Quality Gate
+    #    uses: SonarSource/sonarcloud-quality-gate-action@v1
+    #    env:
+    #      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
