@@ -1,7 +1,9 @@
 {
   "name": "user-ui",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/user-ui/src",
+  "tags": [],
   "targets": {
     "lint": {
       "executor": "nx:run-commands",
@@ -10,41 +12,44 @@
         "cwd": "apps/user-ui"
       }
     },
-
     "test": {
       "executor": "nx:run-commands",
-      "outputs": ["coverage/apps/user-ui"],
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/user-ui"
+      ],
       "options": {
         "command": "npm test -- --coverage",
         "cwd": "apps/user-ui"
       }
     },
-
     "build": {
       "executor": "nx:run-commands",
-      "outputs": ["dist/apps/user-ui"],
+      "outputs": [
+        "{workspaceRoot}/dist/apps/user-ui"
+      ],
       "options": {
         "command": "npm run build",
         "cwd": "apps/user-ui"
       }
     },
-
     "docker-build": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "options": {
         "command": "docker build -t alqoseemi/user-ui:${TAG:-latest} -f Dockerfile .",
         "cwd": "apps/user-ui"
       }
     },
-
     "docker-push": {
       "executor": "nx:run-commands",
-      "dependsOn": ["docker-build"],
+      "dependsOn": [
+        "docker-build"
+      ],
       "options": {
         "command": "docker push alqoseemi/user-ui:${TAG:-latest}"
       }
     }
-  },
-  "tags": []
+  }
 }
