@@ -18,7 +18,7 @@
         "{workspaceRoot}/coverage/apps/user-ui"
       ],
       "options": {
-        "command": "npm test -- --coverage",
+        "command": "npm test -- --watch=false --coverage --passWithNoTests",
         "cwd": "apps/user-ui"
       }
     },
