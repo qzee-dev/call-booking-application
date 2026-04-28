@@ -55,4 +55,3 @@ jobs:
         uses: SonarSource/sonarcloud-quality-gate-action@v1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-``
