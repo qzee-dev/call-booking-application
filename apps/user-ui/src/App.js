@@ -10,7 +10,7 @@ function App() {
     <BrowserRouter>
     <div className="App">
       <Routes>
-        <Route path="/health" element={<h1> The App is Healthy </h1>} />
+        <Route path="/health" element={<h1> The App is Healthy and ok</h1>} />
         <Route path='/' element={<CreateBooking/>} />
       </Routes>
     </div>
