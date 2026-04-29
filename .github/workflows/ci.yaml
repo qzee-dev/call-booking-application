@@ -4,43 +4,56 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "user-ui/**"
-      - "user-api/**"
-      - "admin-ui/**"
+      - "apps/**"
       - ".github/workflows/**"
 
   pull_request:
     branches: ["main"]
     paths:
-      - "user-ui/**"
-      - "user-api/**"
-      - "admin-ui/**"
+      - "apps/**"
 
 jobs:
+  # 🔍 Detect which apps changed
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      apps: ${{ steps.filter.outputs.changes }}
+      apps: ${{ steps.set-matrix.outputs.apps }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Detect changed apps
+      - name: Filter changed paths
         id: filter
         uses: dorny/paths-filter@v3
         with:
           filters: |
             user-ui:
-              - "user-ui/**"
+              - "apps/user-ui/**"
             user-api:
-              - "user-api/**"
+              - "apps/user-api/**"
             admin-ui:
-              - "admin-ui/**"
+              - "apps/admin-ui/**"
+            admin-api:
+              - "apps/admin-api/**"
 
+      - name: Build dynamic matrix
+        id: set-matrix
+        run: |
+          apps=()
+
+          [[ "${{ steps.filter.outputs.user-ui }}" == "true" ]] && apps+=("\"user-ui\"")
+          [[ "${{ steps.filter.outputs.user-api }}" == "true" ]] && apps+=("\"user-api\"")
+          [[ "${{ steps.filter.outputs.admin-ui }}" == "true" ]] && apps+=("\"admin-ui\"")
+          [[ "${{ steps.filter.outputs.admin-api }}" == "true" ]] && apps+=("\"admin-api\"")
+
+          echo "apps=[${apps[*]}]" >> $GITHUB_OUTPUT
+
+  # 🚀 Run CI only for changed apps
   ci:
     needs: detect-changes
     runs-on: ubuntu-latest
 
+    # Skip if nothing changed
     if: needs.detect-changes.outputs.apps != '[]'
 
     strategy:
@@ -53,28 +66,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: ${{ matrix.app }}/package-lock.json
+          cache-dependency-path: apps/${{ matrix.app }}/package-lock.json
 
       - name: Install dependencies
-        working-directory: ${{ matrix.app }}
+        working-directory: apps/${{ matrix.app }}
         run: npm ci
 
       - name: Run tests with coverage
-        working-directory: ${{ matrix.app }}
+        working-directory: apps/${{ matrix.app }}
         run: npm test -- --coverage --passWithNoTests
 
- #     - name: Run ESLint
- #       working-directory: ${{ matrix.app }}
- #       run: npm run lint
+      # Optional lint
+      # - name: Run ESLint
+      #   working-directory: apps/${{ matrix.app }}
+      #   run: npm run lint
 
       - name: SonarQube Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
-          projectBaseDir: ${{ matrix.app }}
+          projectBaseDir: apps/${{ matrix.app }}
           args: >
             -Dsonar.projectKey=${{ matrix.app }}
             -Dsonar.organization=my-org
@@ -84,3 +99,4 @@ jobs:
             -Dsonar.qualitygate.wait=true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+```
