@@ -1,0 +1,2 @@
+// apps/admin-ui/src/app/app.component.ts
+title = 'Admin Dashboard v2';

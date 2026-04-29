@@ -10,7 +10,7 @@ function App() {
     <BrowserRouter>
     <div className="App">
       <Routes>
-        <Route path="/health" element={<h1> The App is Healthy and ok</h1>} />
+        <Route path="/health" element={<h1> The App is Healthy and okay</h1>} />
         <Route path='/admin' element={<Admin/>} />
         <Route path="/" element={<Navigate replace to="/admin" />} />
       </Routes>
