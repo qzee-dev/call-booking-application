@@ -15,16 +15,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # REQUIRED for nx affected
+          fetch-depth: 0
 
-      # ✅ Install pnpm first
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 9
           run_install: false
 
-      # ✅ Setup Node + pnpm cache
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -34,26 +32,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # ✅ Nx base/head
-      - name: Set Nx base and head
-        run: |
-          echo "BASE=origin/main" >> $GITHUB_ENV
-          echo "HEAD=HEAD" >> $GITHUB_ENV
+      # ✅ Let Nx compute base/head correctly
+      - uses: nrwl/nx-set-shas@v4
+
+      - name: Debug affected apps (temporary but recommended)
+        run: pnpm nx print-affected --select=projects
 
       - name: Lint affected
-        run: pnpm nx affected --target=lint --base=$BASE --head=$HEAD
+        run: pnpm nx affected --target=lint
 
       - name: Test affected
-        run: pnpm nx affected --target=test --base=$BASE --head=$HEAD --coverage
+        run: pnpm nx affected --target=test --coverage
 
       - name: Build affected
-        run: pnpm nx affected --target=build --base=$BASE --head=$HEAD
-
-      # ------------------------------------
-      # SonarCloud (disabled)
-      # ------------------------------------
-
-      # - name: Sonar Scan
-      #   uses: SonarSource/sonarcloud-github-action@v2
-      #   with:
-      #     args: >
+        run: pnpm nx affected --target=build
+``
