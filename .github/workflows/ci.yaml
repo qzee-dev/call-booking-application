@@ -44,11 +44,7 @@ jobs:
       # ✅ Let Nx compute base/head correctly
       - uses: nrwl/nx-set-shas@v4
 
-<<<<<<< HEAD
-      - name: Debug affected apps (temporary but recommended)
-=======
       - name: Debug affected apps
->>>>>>> 2592f8556 (coorected)
         run: pnpm nx show projects --affected
 
       - name: Lint affected
