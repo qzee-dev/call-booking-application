@@ -42,11 +42,12 @@ jobs:
       # ✅ Let Nx compute base/head correctly
       
       - uses: nrwl/nx-set-shas@v4
-       
+        with: 
+          error-on-no-successful-workflow: true
 
       # 🔧 Ensure base branch is available locally
       - name: Fetch base branch
-        run: git fetch origin $NX_BASE --depth=50 || true
+        run: git fetch origin $NX_BASE --depth=50 
 
       # 🕵️ Debug affected apps
       - name: Debug affected apps
