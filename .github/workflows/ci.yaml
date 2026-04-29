@@ -48,7 +48,8 @@ jobs:
         run: pnpm nx show projects --affected
       
       - name: Detect affected apps
-        run: pnpm nx affected:apps --base=origin/development --head=HEAD
+        run: pnpm nx show projects --affected --base=origin/development --head=HEAD
+
 
       - name: Lint affected
         run: pnpm nx affected --target=lint --base=origin/development --head=HEAD
