@@ -8,7 +8,7 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npm run lint",
+        "command": "pnpm run lint",
         "cwd": "apps/user-ui"
       }
     },
@@ -18,7 +18,7 @@
         "{workspaceRoot}/coverage/apps/user-ui"
       ],
       "options": {
-        "command": "npm test -- --watch=false --coverage --passWithNoTests",
+        "command": "pnpm test -- --watch=false --coverage --passWithNoTests",
         "cwd": "apps/user-ui"
       }
     },
@@ -28,7 +28,7 @@
         "{workspaceRoot}/dist/apps/user-ui"
       ],
       "options": {
-        "command": "npm run build",
+        "command": "pnpm run build",
         "cwd": "apps/user-ui"
       }
     },

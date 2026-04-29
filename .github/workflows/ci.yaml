@@ -36,12 +36,14 @@ jobs:
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       # ✅ Let Nx compute base/head correctly
+      
       - uses: nrwl/nx-set-shas@v4
+        with:
+          error-on-no-successful-workflow: true
 
       # 🔧 Ensure base branch is available locally
       - name: Fetch base branch

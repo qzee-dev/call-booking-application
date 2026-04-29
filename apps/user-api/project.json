@@ -8,7 +8,7 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npm run lint",
+        "command": "pnpm run lint",
         "cwd": "apps/user-api"
       }
     },
@@ -18,7 +18,7 @@
         "{workspaceRoot}/coverage/apps/user-api"
       ],
       "options": {
-        "command": "npm test -- --coverage",
+        "command": "pnpm test -- --coverage",
         "cwd": "apps/user-api"
       }
     },
@@ -28,7 +28,7 @@
         "{workspaceRoot}/dist/apps/user-api"
       ],
       "options": {
-        "command": "npm run build",
+        "command": "pnpm run build",
         "cwd": "apps/user-api"
       }
     },
