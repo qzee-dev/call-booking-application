@@ -1,2 +1,9 @@
-// apps/admin-ui/src/app/app.component.ts
-title = 'Admin Dashboard v2';
+
+title1 = 'Admin Dashboard v2';
+
+title1 = 'Admin Dashboard v3';
+
+title1 = 'Admin Dashboard v3';
+
+title1 = 'Admin Dashboard v4';
+
