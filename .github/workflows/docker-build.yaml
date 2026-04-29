@@ -13,11 +13,12 @@ jobs:
     name: Build & Push Docker Images
     runs-on: ubuntu-latest
 
-    # ✅ Run if CI succeeded OR manual trigger
+    # ✅ Run if CI succeeded OR manual trigger AND commit message contains [deploy]
     if: >
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'workflow_run' &&
-       github.event.workflow_run.conclusion == 'success')
+       github.event.workflow_run.conclusion == 'success' &&
+       contains(github.event.workflow_run.head_commit.message, '[deploy]'))
 
     permissions:
       contents: read
