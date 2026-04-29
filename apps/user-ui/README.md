@@ -28,3 +28,4 @@ REACT_APP_API_URL= <url_of_user_api_application>
 
 ![image](https://user-images.githubusercontent.com/29688323/182036174-11003487-1673-4243-97d6-e6309c641678.png)
 
+Test CI trigger
