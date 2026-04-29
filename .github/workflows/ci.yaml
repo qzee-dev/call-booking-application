@@ -36,7 +36,7 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
 
       - name: Debug affected apps (temporary but recommended)
-        run: pnpm nx print-affected --select=projects
+        run: pnpm nx show projects --affected
 
       - name: Lint affected
         run: pnpm nx affected --target=lint
