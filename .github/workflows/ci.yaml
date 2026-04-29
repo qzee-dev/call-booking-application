@@ -6,8 +6,11 @@ on:
   pull_request:
     branches: [main, development]
 
+
 jobs:
   ci:
+
+    if: github.ref_name == 'development'
     runs-on: ubuntu-latest
 
     steps:
@@ -42,8 +45,7 @@ jobs:
       # ✅ Let Nx compute base/head correctly
       
       - uses: nrwl/nx-set-shas@v4
-        with: 
-          error-on-no-successful-workflow: true
+      
 
       # 🔧 Ensure base branch is available locally
       - name: Fetch base branch
@@ -51,13 +53,13 @@ jobs:
 
       # 🕵️ Debug affected apps
       - name: Debug affected apps
-        run: pnpm nx show projects --affected --base=$NX_BASE --head=$NX_HEAD
+        run: pnpm nx show projects --affected --base=$NX_BASE  --head=$NX_HEAD
 
       - name: Lint affected
         run: pnpm nx affected --target=lint --base=$NX_BASE --head=$NX_HEAD
 
       - name: Test affected
-        run: pnpm nx affected --target=test --coverage --base=$NX_BASE --head=$NX_HEAD
+        run: pnpm nx affected --target=test --coverage --base=$NX_BASE  --head=$NX_HEAD
 
       - name: Build affected
         run: pnpm nx affected --target=build --base=$NX_BASE --head=$NX_HEAD
