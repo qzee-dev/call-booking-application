@@ -1,0 +1,42 @@
+server:
+  port:  8085
+
+app:
+  config:
+    keycloak:
+      server-url: http://host.docker.internal:8080
+      realm: banking-service
+      client-id: banking-service-client
+      client-secret: XbEay2NJMxYzieK8NSIkZHDpzD6EVQtN
+
+spring:
+  application:
+    name: fund-transfer-service
+    ok: 200
+    success: 200
+    not_found: 404
+    bad_request: 400
+    conflict: 409
+
+  security:
+    enabled: true
+    oauth2:
+        resourceserver:
+          jwt:
+            issuer-uri: http://host.docker.internal:8080/realms/banking-service
+            audience: banking-service-client    
+
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
